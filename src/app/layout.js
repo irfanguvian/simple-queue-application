@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   title: "Queue Management System",
-  description: "A simple queue management system using Next.js and GraphQL",
+  description: "A simple queue management - Made by @irfanguvian",
 };
 
 export default function RootLayout({ children }) {

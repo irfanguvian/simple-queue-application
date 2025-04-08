@@ -39,7 +39,7 @@ export default function Home() {
       
       <footer className="bg-white border-t border-gray-200 mt-8 sm:mt-12">
         <div className="container mx-auto p-4 sm:p-6 text-center text-gray-500 text-xs sm:text-sm">
-          Queue Management System - Built with Next.js and GraphQL
+          Queue Management System - Made by @irfanguvian
         </div>
       </footer>
     </div>
