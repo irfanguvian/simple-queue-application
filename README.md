@@ -1,6 +1,6 @@
 # Queue Management System
 
-A responsive, real-time queue management frontend application built with Next.js and GraphQL. This application demonstrates a queue system that allows users to join queues, check their status in real-time, and join rooms when available.
+A responsive, real-time queue management frontend application built with Next.js and REST API. This application demonstrates a queue system that allows users to join queues, check their status in real-time, and join rooms when available.
 
 ![Queue Management System](public/queue-screenshot.png)
 
@@ -13,9 +13,10 @@ A responsive, real-time queue management frontend application built with Next.js
   - Yellow: In queue/checking status
   - Green: Successfully joined room
   - Red: Not eligible to join
+- **Time Tracking**: Shows when status was last checked with relative time display (e.g., "2 minutes ago")
 - **Dynamic Room Access**: Join rooms when user status becomes available
 - **Responsive Design**: Fully responsive UI that works on mobile, tablet, and desktop
-- **GraphQL Integration**: Uses GraphQL mutations for all API operations
+- **REST API Integration**: Uses standard REST endpoints for all API operations
 - **Error Handling**: Automatically removes users from the queue if errors occur during status checks
 
 ## Technology Stack
@@ -23,50 +24,29 @@ A responsive, real-time queue management frontend application built with Next.js
 - **Frontend**: Next.js (App Router)
 - **State Management**: React Context API
 - **Styling**: Tailwind CSS
-- **API Communication**: GraphQL with graphql-request
+- **API Communication**: Fetch API for REST endpoints
 - **Form Handling**: React Hook Form
 - **Utilities**: classnames for conditional styling
 
 ## API Endpoints
 
-The application interacts with the following GraphQL mutations:
+The application interacts with the following REST endpoints:
 
-1. **Start Queueing**
-```graphql
-mutation StartQueueing($productCode: String) {
-  startQueueing(productCode: $productCode) {
-    success
-    message
-    data {
-      queueId
-    }
-  }
-}
+1. **Start Queue**
+```
+POST ${baseUrl}/queue/start
+Body: { product_code: string }
 ```
 
 2. **Check Queue Status**
-```graphql
-mutation CheckQueueStatus($queueId: String) {
-  checkQueueStatus(queueId: $queueId) {
-    success
-    message
-    data {
-      queue_id
-      is_available
-      estimated_time
-    }
-  }
-}
+```
+GET ${baseUrl}/queue/status/${queue_id}
 ```
 
 3. **Enter Queue Room**
-```graphql
-mutation EnterQueueRoom($queueId: String) {
-  enterQueueRoom(queueId: $queueId) {
-    success
-    message
-  }
-}
+```
+POST ${baseUrl}/queue/enter
+Body: { queue_id: string }
 ```
 
 ## Getting Started
@@ -79,10 +59,10 @@ npm install
 yarn install
 ```
 
-Then, create a `.env.local` file with your GraphQL endpoint:
+Then, create a `.env.local` file with your API endpoint:
 
 ```
-NEXT_PUBLIC_GRAPHQL_ENDPOINT=https://your-api-endpoint.com/graphql
+NEXT_PUBLIC_API_URL=https://your-api-endpoint.com
 ```
 
 Next, run the development server:
@@ -110,10 +90,17 @@ src/
   ├── contexts/
   │   └── QueueContext.js # State management for queue
   └── lib/
-      └── graphql.js     # GraphQL client and queries
+      └── rest.js        # REST API client
 ```
 
 ## Key Features Explained
+
+### Time-Based Status Tracking
+
+The system now shows how long ago a user's status was checked. This is displayed in a user-friendly format:
+- "X seconds ago" for checks within the last minute
+- "X minutes ago" for checks within the last hour
+- The exact time for older checks
 
 ### Automatic Status Checking
 
@@ -134,13 +121,17 @@ The UI adapts seamlessly to different screen sizes:
 
 If a user's status check returns an error or fails, the user is automatically removed from the queue list, simulating a user who has left the room or whose session has expired.
 
+### Robust API Client
+
+The REST API client includes enhanced error handling and data transformation to ensure consistent response formats regardless of server implementation details. This makes the application more resilient to server variations.
+
 ## Development
 
 ### Adding New Features
 
 To add new features or modify existing ones:
 
-1. Update the GraphQL queries/mutations in `lib/graphql.js`
+1. Update the REST endpoints in `lib/rest.js`
 2. Modify state management in `contexts/QueueContext.js`
 3. Update UI components as needed
 

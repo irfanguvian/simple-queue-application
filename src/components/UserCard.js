@@ -31,6 +31,25 @@ export default function UserCard({ user }) {
     }
   };
 
+  // Calculate time since last check
+  const getTimeSinceLastCheck = () => {
+    if (!user.lastChecked) return null;
+    
+    const lastChecked = new Date(user.lastChecked);
+    const now = new Date();
+    const diffMs = now - lastChecked;
+    const diffSecs = Math.floor(diffMs / 1000);
+    const diffMins = Math.floor(diffSecs / 60);
+    
+    if (diffSecs < 60) {
+      return `${diffSecs} second${diffSecs !== 1 ? 's' : ''} ago`;
+    } else if (diffMins < 60) {
+      return `${diffMins} minute${diffMins !== 1 ? 's' : ''} ago`;
+    } else {
+      return lastChecked.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+    }
+  };
+
   // Define card background colors based on status
   const statusColors = {
     start: 'bg-gray-100 border-gray-300',
@@ -61,6 +80,8 @@ export default function UserCard({ user }) {
     }
   };
 
+  const timeSinceLastCheck = getTimeSinceLastCheck();
+
   return (
     <div className={classNames(
       'border rounded-lg p-3 sm:p-4 shadow-sm transition-all h-full',
@@ -82,13 +103,21 @@ export default function UserCard({ user }) {
             )}>
               {getStatusDisplay(user.status)}
             </span>
-            
-            {user.lastChecked && (
-              <span className="text-xs font-medium text-gray-700 whitespace-nowrap">
-                Last: {new Date(user.lastChecked).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-              </span>
-            )}
           </div>
+          
+          {user.lastChecked && (
+            <div className="mb-2 sm:mb-3 flex items-center">
+              <span className="text-xs sm:text-sm font-medium text-gray-600">
+                Last checked: 
+                <span className="ml-1 font-bold text-gray-800">{timeSinceLastCheck}</span>
+              </span>
+              {user.lastChecked && (
+                <span className="ml-2 text-xs text-gray-500">
+                  ({new Date(user.lastChecked).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})})
+                </span>
+              )}
+            </div>
+          )}
           
           {user.isAvailable && user.status !== 'joined' && (
             <p className="text-sm sm:text-base font-bold text-green-600 mb-1 sm:mb-2">

@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useCallback, useEffect } from 'react';
-import graphQLClient, { MUTATIONS } from '@/lib/graphql';
+import api from '@/lib/rest';
 
 const QueueContext = createContext();
 
@@ -20,7 +20,7 @@ export function QueueProvider({ children }) {
     setError(null);
     
     try {
-      const result = await graphQLClient.request(MUTATIONS.START_QUEUEING, { productCode });
+      const result = await api.startQueue(productCode);
       
       if (result.startQueueing.success) {
         const newUser = {
@@ -56,7 +56,7 @@ export function QueueProvider({ children }) {
     try {
       // Create an array of promises for parallel API calls
       const userPromises = Array.from({ length: count }, () => 
-        graphQLClient.request(MUTATIONS.START_QUEUEING, { productCode })
+        api.startQueue(productCode)
       );
       
       // Wait for all API calls to complete
@@ -101,9 +101,7 @@ export function QueueProvider({ children }) {
     if (!user) return null;
     
     try {
-      const result = await graphQLClient.request(MUTATIONS.CHECK_QUEUE_STATUS, { 
-        queueId: user.queueId 
-      });
+      const result = await api.checkQueueStatus(user.queueId);
       
       if (result.checkQueueStatus.success) {
         const { queue_id, is_available, estimated_time } = result.checkQueueStatus.data;
@@ -155,9 +153,7 @@ export function QueueProvider({ children }) {
     setError(null);
     
     try {
-      const result = await graphQLClient.request(MUTATIONS.ENTER_QUEUE_ROOM, { 
-        queueId: user.queueId 
-      });
+      const result = await api.enterQueueRoom(user.queueId);
       
       const updatedUser = {
         ...user,
