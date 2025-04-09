@@ -86,7 +86,12 @@ export default function QueueForm() {
                   min="1"
                   max="100"
                   value={bulkCount}
-                  onChange={(e) => setBulkCount(parseInt(e.target.value) || 1)}
+                  onChange={(e) => {
+                    if(e.target.value < 1 || e.target.value > 1000) {
+                      e.target.value = 1;
+                    }
+                    setBulkCount(parseInt(e.target.value) || 1)
+                  }}
                   className="text-black w-14 sm:w-16 px-2 py-1 border border-gray-300 rounded-md text-center text-sm"
                   disabled={isBulkCreating}
                 />
